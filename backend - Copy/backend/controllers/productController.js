@@ -20,15 +20,28 @@ const createProduct = async (req, res) => {
       });
     }
 
-    // 🔥 معالجة الصور: لو فيه ملفات نرفعها؛ لو مفيش نخلي الصور اللي جاية من البودي كما هي
     const base = `${req.protocol}://${req.get('host')}`;
     const imagesFromFiles = (req.files || []).map(f => `${base}/uploads/products/${f.filename}`);
 
     const createData = { ...req.body };
 
+    // معالجة روابط الصور إذا كانت مرسلة كـ JSON string
+    if (req.body.images && typeof req.body.images === 'string') {
+      try {
+        createData.images = JSON.parse(req.body.images);
+      } catch (e) {
+        console.log('Failed to parse images JSON, treating as regular field');
+      }
+    }
+
     // لو فيه ملفات مرفوعة نكتبها في images، وإلا نسيب images اللي جاية من البودي
     if (imagesFromFiles.length > 0) {
-      createData.images = imagesFromFiles;
+      // إذا كان هناك ملفات مرفوعة وروابط أيضاً، ندمجهم
+      if (createData.images && Array.isArray(createData.images)) {
+        createData.images = [...createData.images, ...imagesFromFiles];
+      } else {
+        createData.images = imagesFromFiles;
+      }
     }
 
     // thumbnail افتراضيًا أول صورة لو مش متبعتش
@@ -255,11 +268,35 @@ const getHomeSliderProducts = async (req, res) => {
   }
 };
 
+// Get all unique categories
+const getCategories = async (req, res) => {
+  try {
+    const categories = await Product.distinct('category');
+    
+    // Filter out null/undefined/empty categories and sort
+    const validCategories = categories
+      .filter(cat => cat && cat.trim() !== '')
+      .sort();
+
+    res.json({
+      status: "success",
+      data: validCategories
+    });
+  } catch (err) {
+    console.error('Error getting categories:', err);
+    res.status(500).json({
+      status: "error",
+      message: "Failed to get categories"
+    });
+  }
+};
+
 module.exports = {
   createProduct,
   getProducts,
   getProductById,
   updateProduct,
   deleteProduct,
-  getHomeSliderProducts
+  getHomeSliderProducts,
+  getCategories
 };

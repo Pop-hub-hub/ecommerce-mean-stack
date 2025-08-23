@@ -20,6 +20,9 @@ connectDB();
 
 const app = express();
 
+// Trust proxy to get correct client IPs when behind a load balancer/CDN
+app.set('trust proxy', 1);
+
 // Security middleware
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" }
@@ -34,7 +37,7 @@ app.use(morgan('dev'));
 // CORS configuration
 const allowedOrigins = process.env.ALLOWED_ORIGINS 
   ? process.env.ALLOWED_ORIGINS.split(',')
-  : ['http://localhost:3000', 'http://localhost:4200'];
+  : ['http://localhost:4200'];
 
 const corsOptions = {
   origin: function (origin, callback) {
@@ -47,7 +50,7 @@ const corsOptions = {
     }
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   optionsSuccessStatus: 200
 };
@@ -65,7 +68,11 @@ const limiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
-app.use('/api', limiter);
+if (process.env.NODE_ENV === 'production') {
+  app.use('/api', limiter);
+} else {
+  console.log('Rate limiting disabled in development');
+}
 
 // Body parsing
 app.use(express.json({ limit: '10mb' }));

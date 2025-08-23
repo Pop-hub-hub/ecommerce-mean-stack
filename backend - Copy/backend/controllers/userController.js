@@ -1,6 +1,9 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
+const dotenv = require("dotenv");
+dotenv.config();
+
 // Get all users (excluding sensitive data) only admin can get all users const
 getAllUser = async (req, res) => {
   try {
@@ -66,7 +69,7 @@ const register = async (req, res) => {
     });
     // Generate JWT token
     const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET_KEY, {
-      expiresIn: "30d",
+      expiresIn: process.env.JWT_EXPIRES_IN || "180d",
     });
     // Prepare response (exclude sensitive data)
     const userResponse = {
@@ -116,7 +119,7 @@ const login = async (req, res) => {
       const token = jwt.sign(
         { id: foundUser._id },
         process.env.JWT_SECRET_KEY,
-        { expiresIn: "30d" }
+        { expiresIn: process.env.JWT_EXPIRES_IN || "180d" }
       );
       foundUser.token = token;
       await foundUser.save();
@@ -192,7 +195,7 @@ const refreshToken = async (req, res) => {
     }
     // Generate new token
     const newToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, {
-      expiresIn: "30d",
+      expiresIn: process.env.JWT_EXPIRES_IN || "180d",
     });
     // Update user's token
     user.token = newToken;

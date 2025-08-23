@@ -10,13 +10,18 @@ router.get("/", verifyToken, checkRole(["admin"]), orderController.getAllOrders)
 
 // User-specific operations
 router.get('/:userId', verifyToken, orderController.getOrdersByUser);
-router.delete('/:orderId', verifyToken, checkRole(["admin"]), orderController.deleteOrder);
-router.put('/:orderId', verifyToken, checkRole(["admin"]), orderController.updateOrder);
-router.put('/:orderId/item', verifyToken, checkRole(["admin"]), orderController.updateOrderItemQuantity);
-router.delete('/:orderId/item/:productId', verifyToken, checkRole(["admin"]), orderController.removeOrderItem);
-router.post('/:orderId/item', verifyToken, checkRole(["admin"]), orderController.addOrderItem);
+// Allow owners to manage their own pending orders; controller enforces ownership
+router.delete('/:orderId', verifyToken, orderController.deleteOrder);
+router.put('/:orderId', verifyToken, orderController.updateOrder);
+router.patch('/:orderId', verifyToken, orderController.updateOrder);
+router.put('/:orderId/item', verifyToken, orderController.updateOrderItemQuantity);
+router.delete('/:orderId/item/:productId', verifyToken, orderController.removeOrderItem);
+router.post('/:orderId/item', verifyToken, orderController.addOrderItem);
 
 // Update order status and ETA (admin only)
 router.patch('/:orderId/status', verifyToken, checkRole(["admin"]), orderController.updateOrderStatus);
+
+// ✅ New: Update status of a specific product inside an order
+router.put('/:orderId/item-status', verifyToken, checkRole(["admin"]), orderController.updateOrderItemStatus);
 
 module.exports = router;

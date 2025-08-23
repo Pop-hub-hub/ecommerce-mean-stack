@@ -1,6 +1,15 @@
 const mongoose = require("mongoose");
 const Order = require("../models/orderModels");
 const Product = require("../models/productModel"); 
+const User = require("../models/userModel");
+
+// Helper: only owner of the order or admin can modify/delete
+function canModifyOrder(reqUser, order) {
+  if (!reqUser || !order) return false;
+  const isOwner = String(order.user) === String(reqUser._id);
+  const isAdmin = reqUser.role === 'admin';
+  return isOwner || isAdmin;
+}
 
 exports.createOrder = async (req, res) => {
   try {
@@ -29,7 +38,11 @@ exports.createOrder = async (req, res) => {
         return res.status(400).json({ error: `Invalid productId: ${item.productId}` });
       }
       const qty = Math.max(1, parseInt(item.quantity, 10) || 1);
-      sanitized.push({ productId: item.productId, quantity: qty });
+      sanitized.push({
+        productId: item.productId,
+        quantity: qty,
+        status: 'pending' // status of each product in the order
+      });
     }
     if (sanitized.length === 0) {
       return res.status(400).json({ error: 'No valid products to order' });
@@ -44,7 +57,7 @@ exports.createOrder = async (req, res) => {
 
     const eta = '3-5 days';
     const newOrder = new Order({
-      user: String(req.user._id),
+      user: req.user._id,
       products: sanitized,
       totalPrice: computedTotal || totalPrice,
       address,
@@ -95,10 +108,28 @@ exports.getAllOrders = async (req, res) => {
     const orders = await Order.find()
       .populate("products.productId")
       .populate("user", "firstName lastName email");
+
+    // Defensive fix: some legacy orders may have `user` stored as a string ObjectId, causing populate to miss
+    const normalized = await Promise.all(orders.map(async (o) => {
+      // If user is missing details or is a string, fetch minimal user profile
+      if (!o.user || typeof o.user === 'string' || !o.user.firstName) {
+        const userId = typeof o.user === 'string' ? o.user : o.user?._id;
+        if (userId) {
+          const u = await User.findById(userId).select('firstName lastName email');
+          if (u) {
+            const obj = o.toObject ? o.toObject() : o;
+            obj.user = { _id: u._id, firstName: u.firstName, lastName: u.lastName, email: u.email };
+            return obj;
+          }
+        }
+      }
+      return o;
+    }));
+
     res.status(200).json({
       status: "success",
       message: "Orders retrieved successfully",
-      orders: orders
+      orders: normalized
     });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch orders: ' + error.message });
@@ -138,12 +169,54 @@ exports.updateOrderStatus = async (req, res) => {
     if (status) order.status = status;
     if (eta) order.eta = eta;
     await order.save();
-    const populated = await Order.findById(orderId).populate('products.productId');
+    const populated = await Order.findById(orderId)
+      .populate('products.productId')
+      .populate('user', 'firstName lastName email');
     res.json(populated);
   } catch (error) {
     res.status(500).json({ error: 'Failed to update status: ' + error.message });
   }
 };
+
+exports.updateOrderItemStatus = async (req, res) => {
+  const { orderId } = req.params;
+  const { productId, status } = req.body;
+
+  const allowedStatuses = ['pending', 'packed', 'shipped', 'delivered', 'cancelled'];
+  if (!allowedStatuses.includes(status)) {
+    return res.status(400).json({ error: `Invalid status: '${status}'. Allowed values are: ${allowedStatuses.join(', ')}` });
+  }
+
+  try {
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+
+    const item = order.products.find(p => String(p.productId) === String(productId));
+    if (!item) {
+      return res.status(404).json({ error: 'Product not found in order' });
+    }
+
+    item.status = status;
+    await order.save();
+
+    const populatedOrder = await Order.findById(orderId)
+      .populate('products.productId')
+      .populate('user', 'firstName lastName email');
+
+    res.status(200).json({
+      message: 'Product status updated successfully',
+      order: populatedOrder
+    });
+  } catch (error) {
+    console.error(`Error updating product status in order ${orderId}:`, error);
+    res.status(500).json({ error: 'Failed to update item status: ' + error.message });
+  }
+};
+
+
+
 
 exports.deleteOrder = async (req, res) => {
   const { orderId } = req.params;
@@ -151,6 +224,9 @@ exports.deleteOrder = async (req, res) => {
     const order = await Order.findById(orderId);
     if (!order) {
       return res.status(404).json({ error: 'Order not found' });
+    }
+    if (!canModifyOrder(req.user, order)) {
+      return res.status(403).json({ error: 'Access denied' });
     }
     
     await Order.findByIdAndDelete(orderId);
@@ -172,6 +248,9 @@ exports.updateOrder = async (req, res) => {
   try {
     const order = await Order.findById(orderId);
     if (!order) return res.status(404).json({ error: 'Order not found' });
+    if (!canModifyOrder(req.user, order)) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
     if (order.status !== 'pending') return res.status(400).json({ error: 'Order is not editable' });
 
     // sanitize and recalc total
@@ -209,6 +288,9 @@ exports.updateOrderItemQuantity = async (req, res) => {
   try {
     const order = await Order.findById(orderId);
     if (!order) return res.status(404).json({ error: 'Order not found' });
+    if (!canModifyOrder(req.user, order)) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
     if (order.status !== 'pending') return res.status(400).json({ error: 'Order is not editable' });
 
     const item = order.products.find(p => String(p.productId) === String(productId));
@@ -235,6 +317,9 @@ exports.removeOrderItem = async (req, res) => {
   try {
     const order = await Order.findById(orderId);
     if (!order) return res.status(404).json({ error: 'Order not found' });
+    if (!canModifyOrder(req.user, order)) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
     if (order.status !== 'pending') return res.status(400).json({ error: 'Order is not editable' });
 
     order.products = order.products.filter(p => String(p.productId) !== String(productId));
@@ -256,6 +341,9 @@ exports.addOrderItem = async (req, res) => {
   try {
     const order = await Order.findById(orderId);
     if (!order) return res.status(404).json({ error: 'Order not found' });
+    if (!canModifyOrder(req.user, order)) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
     if (order.status !== 'pending') return res.status(400).json({ error: 'Order is not editable' });
 
     const existing = order.products.find(p => String(p.productId) === String(productId));

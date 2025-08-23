@@ -1,0 +1,646 @@
+{
+  "info": {
+    "name": "Ecommerce API Collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Postman collection for all available endpoints in the Ecommerce backend. Uses {{baseUrl}} and {{token}} variables."
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:4000" },
+    { "key": "token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Health & Test",
+      "item": [
+        {
+          "name": "Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/health", "host": ["{{baseUrl}}"], "path": ["health"] }
+          }
+        },
+        {
+          "name": "Test",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/test", "host": ["{{baseUrl}}"], "path": ["test"] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "Products (Public)",
+      "item": [
+        {
+          "name": "Get Products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/products", "host": ["{{baseUrl}}"], "path": ["api","products"] }
+          }
+        },
+        {
+          "name": "Get Categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/products/categories", "host": ["{{baseUrl}}"], "path": ["api","products","categories"] }
+          }
+        },
+        {
+          "name": "Home Slider Products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/products/home-slider", "host": ["{{baseUrl}}"], "path": ["api","products","home-slider"] }
+          }
+        },
+        {
+          "name": "Get Product By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","products", ":id"],
+              "variable": [{"key": "id", "value": "<productId>"}]
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "Products (Admin)",
+      "item": [
+        {
+          "name": "Create Product (multipart/form-data)",
+          "request": {
+            "method": "POST",
+            "header": [ {"key": "Authorization", "value": "Bearer {{token}}"} ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "images", "type": "file", "src": [] },
+                { "key": "images", "type": "file", "src": [], "disabled": true },
+                {
+                  "key": "data",
+                  "type": "text",
+                  "value": "{\n  \"title\": \"Product A\",\n  \"price\": 100,\n  \"category\": \"Phones\",\n  \"description\": \"...\"\n}"
+                }
+              ]
+            },
+            "url": { "raw": "{{baseUrl}}/api/products", "host": ["{{baseUrl}}"], "path": ["api","products"] }
+          }
+        },
+        {
+          "name": "Update Product (multipart optional)",
+          "request": {
+            "method": "PUT",
+            "header": [ {"key": "Authorization", "value": "Bearer {{token}}"} ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "images", "type": "file", "src": [], "disabled": true },
+                { "key": "data", "type": "text", "value": "{\n  \"title\": \"Product A updated\"\n}" }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/products/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","products", ":id"],
+              "variable": [{"key": "id", "value": "<productId>"}]
+            }
+          }
+        },
+        {
+          "name": "Delete Product",
+          "request": {
+            "method": "DELETE",
+            "header": [ {"key": "Authorization", "value": "Bearer {{token}}"} ],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","products", ":id"],
+              "variable": [{"key": "id", "value": "<productId>"}]
+            }
+          }
+        },
+        {
+          "name": "Upload Product Images Only",
+          "request": {
+            "method": "POST",
+            "header": [ {"key": "Authorization", "value": "Bearer {{token}}"} ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [ { "key": "images", "type": "file", "src": [] } ]
+            },
+            "url": { "raw": "{{baseUrl}}/api/products/upload", "host": ["{{baseUrl}}"], "path": ["api","products","upload"] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "Users / Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [ {"key": "Content-Type", "value": "application/json"} ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"Passw0rd!\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/users/register", "host": ["{{baseUrl}}"], "path": ["api","users","register"] }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [ {"key": "Content-Type", "value": "application/json"} ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"Passw0rd!\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/users/login", "host": ["{{baseUrl}}"], "path": ["api","users","login"] }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [ {"key": "Content-Type", "value": "application/json"} ],
+            "body": { "mode": "raw", "raw": "{}" },
+            "url": { "raw": "{{baseUrl}}/api/users/refresh-token", "host": ["{{baseUrl}}"], "path": ["api","users","refresh-token"] }
+          }
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [ {"key": "Content-Type", "value": "application/json"} ],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"john@example.com\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/users/forgot-password", "host": ["{{baseUrl}}"], "path": ["api","users","forgot-password"] }
+          }
+        },
+        {
+          "name": "Verify Reset Code",
+          "request": {
+            "method": "POST",
+            "header": [ {"key": "Content-Type", "value": "application/json"} ],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"john@example.com\",\n  \"resetCode\": \"123456\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/users/verify-reset-code", "host": ["{{baseUrl}}"], "path": ["api","users","verify-reset-code"] }
+          }
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [ {"key": "Content-Type", "value": "application/json"} ],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"john@example.com\",\n  \"newPassword\": \"NewPassw0rd!\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/users/reset-password", "host": ["{{baseUrl}}"], "path": ["api","users","reset-password"] }
+          }
+        },
+        {
+          "name": "Get All Users (admin)",
+          "request": {
+            "method": "GET",
+            "header": [ {"key": "Authorization", "value": "Bearer {{token}}"} ],
+            "url": { "raw": "{{baseUrl}}/api/users", "host": ["{{baseUrl}}"], "path": ["api","users"] }
+          }
+        },
+        {
+          "name": "Get User By Id (admin)",
+          "request": {
+            "method": "GET",
+            "header": [ {"key": "Authorization", "value": "Bearer {{token}}"} ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","users", ":id"],
+              "variable": [{"key": "id", "value": "<userId>"}]
+            }
+          }
+        },
+        {
+          "name": "Update User (protected)",
+          "request": {
+            "method": "PUT",
+            "header": [ {"key": "Authorization", "value": "Bearer {{token}}"}, {"key": "Content-Type", "value": "application/json"} ],
+            "body": { "mode": "raw", "raw": "{\n  \"firstName\": \"John\"\n}" },
+            "url": {
+              "raw": "{{baseUrl}}/api/users/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","users", ":id"],
+              "variable": [{"key": "id", "value": "<userId>"}]
+            }
+          }
+        },
+        {
+          "name": "Delete User (admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [ {"key": "Authorization", "value": "Bearer {{token}}"} ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","users", ":id"],
+              "variable": [{"key": "id", "value": "<userId>"}]
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "Cart",
+      "item": [
+        {
+          "name": "Get Cart by UserId",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/cart/:userId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","cart", ":userId"],
+              "variable": [{"key": "userId", "value": "<userId>"}]
+            }
+          }
+        },
+        {
+          "name": "Add To Cart",
+          "request": {
+            "method": "POST",
+            "header": [ {"key": "Content-Type", "value": "application/json"} ],
+            "body": { "mode": "raw", "raw": "{\n  \"userId\": \"<userId>\",\n  \"productId\": \"<productId>\",\n  \"quantity\": 1\n}" },
+            "url": { "raw": "{{baseUrl}}/api/cart/add", "host": ["{{baseUrl}}"], "path": ["api","cart","add"] }
+          }
+        },
+        {
+          "name": "Update Quantity",
+          "request": {
+            "method": "PUT",
+            "header": [ {"key": "Content-Type", "value": "application/json"} ],
+            "body": { "mode": "raw", "raw": "{\n  \"userId\": \"<userId>\",\n  \"productId\": \"<productId>\",\n  \"quantity\": 2\n}" },
+            "url": { "raw": "{{baseUrl}}/api/cart/update-quantity", "host": ["{{baseUrl}}"], "path": ["api","cart","update-quantity"] }
+          }
+        },
+        {
+          "name": "Remove Item From Cart",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/cart/:userId/:productId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","cart", ":userId", ":productId"],
+              "variable": [
+                {"key": "userId", "value": "<userId>"},
+                {"key": "productId", "value": "<productId>"}
+              ]
+            }
+          }
+        },
+        {
+          "name": "Clear Cart",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/cart/:userId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","cart", ":userId"],
+              "variable": [{"key": "userId", "value": "<userId>"}]
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "Create Order (protected)",
+          "request": {
+            "method": "POST",
+            "header": [ {"key": "Authorization", "value": "Bearer {{token}}"}, {"key": "Content-Type", "value": "application/json"} ],
+            "body": { "mode": "raw", "raw": "{\n  \"userId\": \"<userId>\",\n  \"items\": [{ \n    \"productId\": \"<productId>\", \n    \"quantity\": 1 \n  }],\n  \"address\": \"Somewhere\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/orders", "host": ["{{baseUrl}}"], "path": ["api","orders"] }
+          }
+        },
+        {
+          "name": "Get All Orders (admin)",
+          "request": {
+            "method": "GET",
+            "header": [ {"key": "Authorization", "value": "Bearer {{token}}"} ],
+            "url": { "raw": "{{baseUrl}}/api/orders", "host": ["{{baseUrl}}"], "path": ["api","orders"] }
+          }
+        },
+        {
+          "name": "Get Orders by User (protected)",
+          "request": {
+            "method": "GET",
+            "header": [ {"key": "Authorization", "value": "Bearer {{token}}"} ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/:userId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","orders", ":userId"],
+              "variable": [{"key": "userId", "value": "<userId>"}]
+            }
+          }
+        },
+        {
+          "name": "Delete Order (admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [ {"key": "Authorization", "value": "Bearer {{token}}"} ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/:orderId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","orders", ":orderId"],
+              "variable": [{"key": "orderId", "value": "<orderId>"}]
+            }
+          }
+        },
+        {
+          "name": "Update Order (admin)",
+          "request": {
+            "method": "PUT",
+            "header": [ {"key": "Authorization", "value": "Bearer {{token}}"}, {"key": "Content-Type", "value": "application/json"} ],
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"processing\"\n}" },
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/:orderId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","orders", ":orderId"],
+              "variable": [{"key": "orderId", "value": "<orderId>"}]
+            }
+          }
+        },
+        {
+          "name": "Add Order Item (admin)",
+          "request": {
+            "method": "POST",
+            "header": [ {"key": "Authorization", "value": "Bearer {{token}}"}, {"key": "Content-Type", "value": "application/json"} ],
+            "body": { "mode": "raw", "raw": "{\n  \"productId\": \"<productId>\",\n  \"quantity\": 1\n}" },
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/:orderId/item",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","orders", ":orderId", "item"],
+              "variable": [{"key": "orderId", "value": "<orderId>"}]
+            }
+          }
+        },
+        {
+          "name": "Update Order Item Quantity (admin)",
+          "request": {
+            "method": "PUT",
+            "header": [ {"key": "Authorization", "value": "Bearer {{token}}"}, {"key": "Content-Type", "value": "application/json"} ],
+            "body": { "mode": "raw", "raw": "{\n  \"productId\": \"<productId>\",\n  \"quantity\": 2\n}" },
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/:orderId/item",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","orders", ":orderId", "item"],
+              "variable": [{"key": "orderId", "value": "<orderId>"}]
+            }
+          }
+        },
+        {
+          "name": "Remove Order Item (admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [ {"key": "Authorization", "value": "Bearer {{token}}"} ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/:orderId/item/:productId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","orders", ":orderId", "item", ":productId"],
+              "variable": [
+                {"key": "orderId", "value": "<orderId>"},
+                {"key": "productId", "value": "<productId>"}
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Order Status (admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [ {"key": "Authorization", "value": "Bearer {{token}}"}, {"key": "Content-Type", "value": "application/json"} ],
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"shipped\",\n  \"eta\": \"2025-09-01\"\n}" },
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/:orderId/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","orders", ":orderId", "status"],
+              "variable": [{"key": "orderId", "value": "<orderId>"}]
+            }
+          }
+        },
+        {
+          "name": "Update Order Item Status (admin)",
+          "request": {
+            "method": "PUT",
+            "header": [ {"key": "Authorization", "value": "Bearer {{token}}"}, {"key": "Content-Type", "value": "application/json"} ],
+            "body": { "mode": "raw", "raw": "{\n  \"productId\": \"<productId>\",\n  \"status\": \"delivered\"\n}" },
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/:orderId/item-status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","orders", ":orderId", "item-status"],
+              "variable": [{"key": "orderId", "value": "<orderId>"}]
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "Admin Namespace (all require admin)",
+      "item": [
+        {
+          "name": "Admin: Users",
+          "item": [
+            {
+              "name": "Get Users",
+              "request": {
+                "method": "GET",
+                "header": [ {"key": "Authorization", "value": "Bearer {{token}}"} ],
+                "url": { "raw": "{{baseUrl}}/api/admin/users", "host": ["{{baseUrl}}"], "path": ["api","admin","users"] }
+              }
+            },
+            {
+              "name": "Get User By Id",
+              "request": {
+                "method": "GET",
+                "header": [ {"key": "Authorization", "value": "Bearer {{token}}"} ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/users/:id",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api","admin","users", ":id"],
+                  "variable": [{"key": "id", "value": "<userId>"}]
+                }
+              }
+            },
+            {
+              "name": "Update User",
+              "request": {
+                "method": "PUT",
+                "header": [ {"key": "Authorization", "value": "Bearer {{token}}"}, {"key": "Content-Type", "value": "application/json"} ],
+                "body": { "mode": "raw", "raw": "{\n  \"role\": \"admin\"\n}" },
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/users/:id",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api","admin","users", ":id"],
+                  "variable": [{"key": "id", "value": "<userId>"}]
+                }
+              }
+            },
+            {
+              "name": "Delete User",
+              "request": {
+                "method": "DELETE",
+                "header": [ {"key": "Authorization", "value": "Bearer {{token}}"} ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/users/:id",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api","admin","users", ":id"],
+                  "variable": [{"key": "id", "value": "<userId>"}]
+                }
+              }
+            },
+            {
+              "name": "Delete All Users",
+              "request": {
+                "method": "DELETE",
+                "header": [ {"key": "Authorization", "value": "Bearer {{token}}"} ],
+                "url": { "raw": "{{baseUrl}}/api/admin/users", "host": ["{{baseUrl}}"], "path": ["api","admin","users"] }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin: Products",
+          "item": [
+            {
+              "name": "Get Products",
+              "request": {
+                "method": "GET",
+                "header": [ {"key": "Authorization", "value": "Bearer {{token}}"} ],
+                "url": { "raw": "{{baseUrl}}/api/admin/products", "host": ["{{baseUrl}}"], "path": ["api","admin","products"] }
+              }
+            },
+            {
+              "name": "Get Product By Id",
+              "request": {
+                "method": "GET",
+                "header": [ {"key": "Authorization", "value": "Bearer {{token}}"} ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/products/:id",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api","admin","products", ":id"],
+                  "variable": [{"key": "id", "value": "<productId>"}]
+                }
+              }
+            },
+            {
+              "name": "Create Product",
+              "request": {
+                "method": "POST",
+                "header": [ {"key": "Authorization", "value": "Bearer {{token}}"}, {"key": "Content-Type", "value": "application/json"} ],
+                "body": { "mode": "raw", "raw": "{\n  \"title\": \"Product A\",\n  \"price\": 100\n}" },
+                "url": { "raw": "{{baseUrl}}/api/admin/products", "host": ["{{baseUrl}}"], "path": ["api","admin","products"] }
+              }
+            },
+            {
+              "name": "Update Product",
+              "request": {
+                "method": "PUT",
+                "header": [ {"key": "Authorization", "value": "Bearer {{token}}"}, {"key": "Content-Type", "value": "application/json"} ],
+                "body": { "mode": "raw", "raw": "{\n  \"title\": \"Updated\"\n}" },
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/products/:id",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api","admin","products", ":id"],
+                  "variable": [{"key": "id", "value": "<productId>"}]
+                }
+              }
+            },
+            {
+              "name": "Delete Product",
+              "request": {
+                "method": "DELETE",
+                "header": [ {"key": "Authorization", "value": "Bearer {{token}}"} ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/products/:id",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api","admin","products", ":id"],
+                  "variable": [{"key": "id", "value": "<productId>"}]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin: Orders",
+          "item": [
+            {
+              "name": "Get All Orders",
+              "request": {
+                "method": "GET",
+                "header": [ {"key": "Authorization", "value": "Bearer {{token}}"} ],
+                "url": { "raw": "{{baseUrl}}/api/admin/orders", "host": ["{{baseUrl}}"], "path": ["api","admin","orders"] }
+              }
+            },
+            {
+              "name": "Update Order Status",
+              "request": {
+                "method": "PATCH",
+                "header": [ {"key": "Authorization", "value": "Bearer {{token}}"}, {"key": "Content-Type", "value": "application/json"} ],
+                "body": { "mode": "raw", "raw": "{\n  \"status\": \"shipped\"\n}" },
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/orders/:orderId/status",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api","admin","orders", ":orderId", "status"],
+                  "variable": [{"key": "orderId", "value": "<orderId>"}]
+                }
+              }
+            },
+            {
+              "name": "Update Order",
+              "request": {
+                "method": "PUT",
+                "header": [ {"key": "Authorization", "value": "Bearer {{token}}"}, {"key": "Content-Type", "value": "application/json"} ],
+                "body": { "mode": "raw", "raw": "{\n  \"status\": \"processing\"\n}" },
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/orders/:orderId",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api","admin","orders", ":orderId"],
+                  "variable": [{"key": "orderId", "value": "<orderId>"}]
+                }
+              }
+            },
+            {
+              "name": "Delete Order",
+              "request": {
+                "method": "DELETE",
+                "header": [ {"key": "Authorization", "value": "Bearer {{token}}"} ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/orders/:orderId",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api","admin","orders", ":orderId"],
+                  "variable": [{"key": "orderId", "value": "<orderId>"}]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

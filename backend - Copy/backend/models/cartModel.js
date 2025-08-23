@@ -18,7 +18,6 @@ const cartSchema = new mongoose.Schema({
   userId: {
     type: String, // You can use ObjectId if users are stored
     required: true,
-    unique: true,
   },
   items: [cartItemSchema],
 });

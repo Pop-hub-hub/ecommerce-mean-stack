@@ -15,10 +15,12 @@ const {
   getProductById,
   updateProduct,
   deleteProduct,
-  getHomeSliderProducts
+  getHomeSliderProducts,
+  getCategories
 } = require('../controllers/productController');
 
 // Public routes
+router.get('/categories', getCategories);
 router.get('/home-slider', getHomeSliderProducts);
 router.get('/', getProducts);
 router.get('/:id', getProductById);
