@@ -1,0 +1,194 @@
+<div class="mat-elevation-z8">
+  <div class="products-header">
+    <h2>Products Management</h2>
+    <button mat-raised-button color="primary" (click)="addNewProduct()">
+      <mat-icon>add</mat-icon> Add Product
+    </button>
+  </div>
+
+  <!-- Search and Filters -->
+  <div class="filters-toolbar">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Search Products</mat-label>
+      <input
+        matInput
+        [(ngModel)]="searchTerm"
+        (keyup.enter)="searchProducts()"
+        placeholder="Search by name or description..."
+      />
+      <button matSuffix mat-icon-button (click)="searchProducts()">
+        <mat-icon>search</mat-icon>
+      </button>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="category-field">
+      <mat-label>Category</mat-label>
+      <mat-select
+        [(ngModel)]="selectedCategory"
+        (selectionChange)="onCategoryChange()"
+      >
+        <mat-option value="all">All Categories</mat-option>
+        <mat-option *ngFor="let category of categories" [value]="category">
+          {{ category | titlecase | replace : "-" : " " }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <!-- Products Table -->
+  <div class="mat-elevation-z8">
+    <div class="loading-shade" *ngIf="loading">
+      <mat-spinner diameter="50"></mat-spinner>
+    </div>
+
+    <div *ngIf="!loading">
+      <table mat-table [dataSource]="filteredProducts" class="products-table">
+        <!-- Image Column -->
+        <ng-container matColumnDef="image">
+          <th mat-header-cell *matHeaderCellDef>Image</th>
+          <td mat-cell *matCellDef="let product" class="product-image">
+            <img
+              [src]="
+                product.thumbnail || 'assets/images/placeholder-product.png'
+              "
+              [alt]="product.title"
+              (error)="onImageError($event)"
+              class="product-thumbnail"
+            />
+          </td>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="title">
+          <th mat-header-cell *matHeaderCellDef>Name</th>
+          <td mat-cell *matCellDef="let product" class="product-name">
+            {{ product.title || "N/A" }}
+            <div class="product-brand" *ngIf="product.brand">
+              {{ product.brand }}
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Price Column -->
+        <ng-container matColumnDef="price">
+          <th mat-header-cell *matHeaderCellDef>Price</th>
+          <td mat-cell *matCellDef="let product" class="product-price">
+            {{ product.price | currency : "USD" : "symbol" : "1.2-2" }}
+            <div class="discount-badge" *ngIf="product.discountPercentage > 0">
+              {{ product.discountPercentage }}% off
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Stock Column -->
+        <ng-container matColumnDef="stock">
+          <th mat-header-cell *matHeaderCellDef>Stock</th>
+          <td
+            mat-cell
+            *matCellDef="let product"
+            [class.low-stock]="product.stock < 10"
+            class="product-stock"
+          >
+            {{ product.stock || 0 }}
+            <mat-icon
+              *ngIf="product.stock < 10"
+              class="stock-warning"
+              matTooltip="Low Stock"
+              >warning</mat-icon
+            >
+          </td>
+        </ng-container>
+
+        <!-- Category Column -->
+        <ng-container matColumnDef="category">
+          <th mat-header-cell *matHeaderCellDef>Category</th>
+          <td mat-cell *matCellDef="let product" class="product-category">
+            <span class="category-badge">
+              {{
+                product.category || "Uncategorized"
+                  | titlecase
+                  | replace : "-" : " "
+              }}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="actions-header">
+            Actions
+          </th>
+          <td mat-cell *matCellDef="let product" class="product-actions">
+            <button
+              mat-icon-button
+              color="primary"
+              (click)="viewProduct(product._id); $event.stopPropagation()"
+              matTooltip="View"
+            >
+              <mat-icon>visibility</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              color="accent"
+              (click)="editProduct(product._id); $event.stopPropagation()"
+              matTooltip="Edit"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              color="warn"
+              (click)="deleteProduct($event, product._id)"
+              matTooltip="Delete"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumns"
+          [class.row-hover]="true"
+          (click)="viewProduct(row._id)"
+          style="cursor: pointer"
+        ></tr>
+      </table>
+
+      <!-- Empty State -->
+      <div
+        class="empty-state"
+        *ngIf="filteredProducts.length === 0 && !loading"
+      >
+        <mat-icon class="empty-icon">inventory_2</mat-icon>
+        <h3>No products found</h3>
+        <p *ngIf="searchTerm || selectedCategory !== 'all'">
+          Try adjusting your search or filter criteria
+        </p>
+        <p *ngIf="!searchTerm && selectedCategory === 'all'">
+          No products available. Click the "Add Product" button to get started.
+        </p>
+      </div>
+
+      <!-- Pagination -->
+      <mat-paginator
+        *ngIf="totalProducts > 0"
+        [length]="totalProducts"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="pageSizeOptions"
+        (page)="onPageChange($event)"
+        showFirstLastButtons
+        aria-label="Select page"
+      >
+      </mat-paginator>
+    </div>
+
+    <ng-template #loadingTemplate>
+      <div class="loading-container">
+        <div class="loading-spinner"></div>
+        <p>Loading products...</p>
+      </div>
+    </ng-template>
+  </div>
+</div>

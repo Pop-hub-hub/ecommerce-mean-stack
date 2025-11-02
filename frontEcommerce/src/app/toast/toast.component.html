@@ -1,0 +1,11 @@
+<div
+  *ngIf="visible"
+  @fadeInOut
+  class="toast-container"
+  [ngClass]="type"
+>
+  <span class="icon">
+    {{ type === 'success' ? '✔️' : type === 'error' ? '❌' : 'ℹ️' }}
+  </span>
+  <span class="message">{{ message }}</span>
+</div>

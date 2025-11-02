@@ -1,0 +1,147 @@
+<div class="orders-container">
+  <div class="orders-header">
+    <h2>Orders Management</h2>
+    <div class="header-stats">
+      <div class="stat-item">
+        <span class="stat-label">Total Orders:</span>
+        <span class="stat-value">{{ getOrdersCount() }}</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Total Revenue:</span>
+        <span class="stat-value">${{ getTotalRevenue().toFixed(2) }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search and Filters -->
+  <div class="filters-section">
+    <div class="search-box">
+      <input 
+        type="text" 
+        [(ngModel)]="searchTerm" 
+        (input)="searchOrders()"
+        placeholder="Search orders by ID, customer name, or email..."
+        class="search-input"
+      >
+      <span class="search-icon">🔍</span>
+    </div>
+    
+    <div class="status-filter">
+      <select [(ngModel)]="selectedStatus" (change)="onStatusChange()" class="status-select">
+        <option value="all">All Statuses</option>
+        <option *ngFor="let status of orderStatuses.slice(1)" [value]="status">
+          {{ status.charAt(0).toUpperCase() + status.slice(1) }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Orders Table -->
+  <div class="orders-content">
+    <div class="orders-table-container" *ngIf="!loading; else loadingTemplate">
+      <table class="orders-table">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Products</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of paginatedOrders" class="order-row">
+            <td class="order-id">
+              <span class="id-text">#{{ order._id?.slice(-6) || 'N/A' }}</span>
+            </td>
+            <td class="customer-info">
+              <div class="customer-avatar">{{ order.user?.firstName?.charAt(0) }}{{ order.user?.lastName?.charAt(0) }}</div>
+              <div class="customer-details">
+                <span class="customer-name">{{ order.user?.firstName }} {{ order.user?.lastName }}</span>
+                <span class="customer-email">{{ order.user?.email }}</span>
+              </div>
+            </td>
+            <td class="products-info">
+              <div class="products-count">{{ order.products?.length || 0 }} items</div>
+              <div class="products-preview">
+                <span *ngFor="let product of order.products?.slice(0, 2)" class="product-name">
+                  {{ product.title || product.name }}
+                </span>
+                <span *ngIf="(order.products?.length || 0) > 2" class="more-products">
+                  +{{ (order.products?.length || 0) - 2 }} more
+                </span>
+              </div>
+            </td>
+            <td class="order-total">
+              <span class="total-amount">${{ order.totalPrice?.toFixed(2) || '0.00' }}</span>
+            </td>
+            <td class="order-status">
+              <select 
+                [value]="order.status || 'pending'" 
+                (change)="updateOrderStatus(order._id, $event)"
+                class="status-select"
+                [class]="getStatusColor(order.status || 'pending')"
+              >
+                <option value="pending">Pending</option>
+                <option value="processing">Processing</option>
+                <option value="shipped">Shipped</option>
+                <option value="delivered">Delivered</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </td>
+            <td class="order-date">
+              {{ order.createdAt | date:'short' }}
+            </td>
+            <td class="order-actions">
+              <button class="action-btn view-btn" title="View Order Details">
+                👁️
+              </button>
+              <button class="action-btn edit-btn" title="Edit Order">
+                ✏️
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Pagination -->
+      <div class="pagination" *ngIf="totalPages > 1">
+        <button 
+          class="page-btn" 
+          [disabled]="currentPage === 1"
+          (click)="changePage(currentPage - 1)"
+        >
+          ← Previous
+        </button>
+        
+        <div class="page-numbers">
+          <button 
+            *ngFor="let page of [].constructor(totalPages); let i = index"
+            class="page-btn" 
+            [class.active]="currentPage === i + 1"
+            (click)="changePage(i + 1)"
+          >
+            {{ i + 1 }}
+          </button>
+        </div>
+        
+        <button 
+          class="page-btn" 
+          [disabled]="currentPage === totalPages"
+          (click)="changePage(currentPage + 1)"
+        >
+          Next →
+        </button>
+      </div>
+    </div>
+
+    <ng-template #loadingTemplate>
+      <div class="loading-container">
+        <div class="loading-spinner"></div>
+        <p>Loading orders...</p>
+      </div>
+    </ng-template>
+  </div>
+</div>

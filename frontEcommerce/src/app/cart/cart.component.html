@@ -1,0 +1,52 @@
+<div class="container my-4">
+  <h2 class="mb-4">🛒 Your Cart</h2>
+
+  <div *ngIf="cartItems.length === 0; else cartContent">
+    <div class="alert alert-info text-center">Your cart is empty.</div>
+  </div>
+
+  <ng-template #cartContent>
+    <div *ngFor="let item of cartItems; trackBy: trackByProductId" class="row border-bottom py-3 align-items-center">
+      <div class="col-md-2 col-4">
+        <img [src]="item.product.images[0]" class="img-fluid rounded" [alt]="item.product.title">
+      </div>
+      <div class="col-md-4 col-8">
+        <h5 class="mb-1">{{ item.product.title }}</h5>
+        <p class="text-muted mb-0">{{ item.product.category }}</p>
+      </div>
+      <div class="col-md-2 col-6 mt-2 mt-md-0">
+        <button 
+          (click)="decrease(item)" 
+          class="btn btn-sm btn-outline-secondary"
+          [disabled]="item.quantity <= 1"
+        >−</button>
+        <span class="mx-2">{{ item.quantity }}</span>
+        <button (click)="increase(item)" class="btn btn-sm btn-outline-secondary">+</button>
+      </div>
+      <div class="col-md-2 col-6 mt-2 mt-md-0">
+        <strong>{{ item.product.price * item.quantity | currency:'EGP':'symbol':'1.2-2' }}</strong>
+      </div>
+      <div class="col-md-2 text-end mt-2 mt-md-0">
+        <button (click)="remove(item)" class="btn btn-sm btn-danger">🗑️ Remove</button>
+      </div>
+    </div>
+
+    <div class="text-end mt-4">
+      <h4>Total: {{ getTotal() | currency:'EGP':'symbol':'1.2-2' }}</h4>
+    </div>
+
+    <div class="text-center mt-4">
+      <a routerLink="/buy_now" routerLinkActive="active-link">
+        <button class="btn btn-success btn-lg px-5 rounded-pill shadow-sm">
+          🛍️ Buy Now
+        </button>
+      </a>
+    </div>
+
+    <div class="text-center mt-3">
+      <button class="btn btn-outline-danger" (click)="cartService.clearCart()">
+        🧹 Clear Cart
+      </button>
+    </div>
+  </ng-template>
+</div>

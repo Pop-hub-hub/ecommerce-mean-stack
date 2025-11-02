@@ -1,0 +1,125 @@
+/* Product Card Styling */
+.card {
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  max-width: 500px; 
+  margin: 15px auto;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+
+
+/* Sale Banner Styling */
+.sale-banner {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  padding: 6px 10px;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 4px;
+}
+
+/* Card Body */
+.card-body {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+/* Title Styling */
+.card-title {
+  font-size: 1rem;
+  font-weight: bold;
+  /* color: #333; */
+  margin: 0;
+}
+
+/* Price Styling */
+.card-text {
+  font-size: 0.95rem;
+  color: #f39c12;
+  font-weight: bold;
+}
+
+/* Star Rating Styling */
+.stars {
+  font-size: 1rem;
+}
+
+.stars span {
+  color: #f39c12;
+}
+
+/* Button Styling */
+.btn-outline-primary {
+  font-weight: bold;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+}
+
+.btn-outline-primary:hover {
+  background-color: #3498db;
+  color: #fff;
+  border-color: #3498db;
+}
+
+/* Stock Status Styling */
+.fw-bold {
+  font-weight: 600;
+}
+
+.text-warning {
+  color: #f39c12;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .card {
+    max-width: 90%;
+  }
+
+
+  .card-body {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .btn-outline-primary {
+    font-size: 0.85rem;
+    padding: 5px 10px;
+  }
+}
+
+.product-card {
+  min-height: 450px;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-image-wrapper {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 1rem; 
+}
+
+.product-image {
+  width: 50%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.product-image:hover {
+  transform: scale(1.05);
+}

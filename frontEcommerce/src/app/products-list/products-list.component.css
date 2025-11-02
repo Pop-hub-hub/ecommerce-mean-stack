@@ -1,0 +1,37 @@
+:root {
+  --accent: #5940ff;
+  --accent-hover: #2b0bfa;
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+/* 🧱 Wrapper */
+.product-list-wrapper { background-color: var(--bs-body-bg) !important; color: var(--bs-body-color) !important; transition: background 0.3s ease, color 0.3s ease; }
+
+.search-input { width: 80%; max-width: 600px; border-radius: 12px !important; border: 1px solid color-mix(in srgb, var(--bs-body-color) 30%, transparent) !important; background-color: var(--bs-card-bg) !important; color: var(--bs-body-color) !important; padding: 12px 16px !important; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); transition: border-color 0.3s ease, box-shadow 0.3s ease; }
+
+.search-input::placeholder { color: color-mix(in srgb, var(--bs-body-color) 50%, transparent) !important; }
+
+.search-input:focus {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.3); 
+  outline: none !important;
+}
+
+/* 🧼 Filter Buttons */
+/* .filter-btn {
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+  padding: 8px 16px !important;
+  transition: background-color 0.3s ease;
+}
+
+.filter-btn:hover {
+  background-color: #0b5ed7 !important; 
+} */
+
+/* 📎 Pagination Toolbar */
+/* .pagination-toolbar .page-link {
+  border-radius: 6px !important;
+  font-weight: 500 !important;
+  padding: 6px 12px !important;
+} */

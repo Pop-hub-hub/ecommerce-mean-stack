@@ -1,0 +1,159 @@
+
+@import 'swiper/swiper-bundle.css';
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+
+/* Smooth transitions */
+:root, body, .navbar, .dropdown-menu, .theme-toggle-btn {
+  transition: background-color 0.4s ease, color 0.4s ease, transform 0.3s ease;
+}
+
+/* Bootstrap-aware theme variables */
+:root {
+  color-scheme: light;
+  --bs-body-bg: #f8f9fa;
+  --bs-body-color: #212529;
+  --bs-border-color: #dee2e6;
+  --bs-card-bg: #ffffff;
+  --bs-card-color: #212529;
+  --bs-navbar-bg: #ffffff;
+  --bs-navbar-color: #212529;
+  --bs-dropdown-bg: #ffffff;
+  --bs-dropdown-color: #212529;
+  --bs-dropdown-link-hover-bg: #e9ecef;
+  --footer-bg: #e9ecef;
+  --footer-link: #0d0d0d;
+  --footer-link-hover: #212529;
+}
+
+:root[data-bs-theme="dark"],
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bs-body-bg: #0f1113;
+  --bs-body-color: #e2e6ea;
+  --bs-border-color: #2a2f34;
+  --bs-card-bg: #15191d;
+  --bs-card-color: #e2e6ea;
+  --bs-navbar-bg: #15191d;
+  --bs-navbar-color: #e2e6ea;
+  --bs-dropdown-bg: #1a1f24;
+  --bs-dropdown-color: #e2e6ea;
+  --bs-dropdown-link-hover-bg: #222830;
+  --footer-bg: #13171b;
+  --footer-link: #e9ecef;
+  --footer-link-hover: #ffffff;
+}
+
+/* Apply variables uniformly */
+body {
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+}
+
+.navbar {
+  background-color: var(--bs-navbar-bg) !important;
+  color: var(--bs-navbar-color) !important;
+}
+
+.navbar .navbar-brand,
+.navbar .nav-link {
+  color: var(--bs-navbar-color) !important;
+}
+
+.nav-language button {
+  color: var(--bs-navbar-color) !important;
+}
+
+.dropdown-menu {
+  background-color: var(--bs-dropdown-bg);
+  color: var(--bs-dropdown-color);
+  border-color: var(--bs-border-color);
+}
+
+.dropdown-item:hover {
+  background-color: var(--bs-dropdown-link-hover-bg);
+}
+
+/* Pointer cursor for clickable dropdown items/links */
+.dropdown-menu .dropdown-item,
+.dropdown-menu a,
+.navbar .dropdown-toggle,
+.navbar .nav-link,
+.navbar .navbar-brand { cursor: pointer; }
+
+.card {
+  background-color: var(--bs-card-bg);
+  color: var(--bs-card-color);
+  border: 1px solid var(--bs-border-color);
+}
+
+.footer {
+  background-color: var(--footer-bg) !important;
+  color: var(--bs-body-color) !important;
+}
+
+.footer a { color: var(--footer-link) !important; }
+.footer a:hover { color: var(--footer-link-hover) !important; }
+
+/* 🌗 Theme Toggle Button */
+.theme-toggle-btn {
+  font-size: 1.6rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+.theme-toggle-btn:hover {
+  transform: rotate(20deg) scale(1.1);
+}
+
+/* Navbar toggler icon color that adapts to theme */
+.navbar .navbar-toggler {
+  border-color: color-mix(in srgb, var(--bs-navbar-color) 40%, transparent);
+}
+.navbar .navbar-toggler:focus { box-shadow: none; }
+
+/* Define custom hamburger using mask to respect currentColor */
+.navbar .navbar-toggler-icon {
+  background-image: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  position: relative;
+}
+.navbar .navbar-toggler-icon::before,
+.navbar .navbar-toggler-icon::after,
+.navbar .navbar-toggler-icon span {
+  content: "";
+  display: block;
+  height: 2px;
+  width: 100%;
+  background-color: var(--bs-navbar-color);
+  position: absolute;
+  left: 0;
+}
+.navbar .navbar-toggler-icon span { top: 50%; transform: translateY(-50%); }
+.navbar .navbar-toggler-icon::before { top: 0; }
+.navbar .navbar-toggler-icon::after { bottom: 0; }
+
+/* Ensure any icon inside toggler inherits current color */
+.navbar .navbar-toggler { color: var(--bs-navbar-color); }
+
+/* List group & table theming */
+.list-group-item {
+  background-color: var(--bs-card-bg);
+  color: var(--bs-card-color);
+  border-color: var(--bs-border-color);
+}
+
+.table {
+  --bs-table-bg: transparent;
+  --bs-table-color: var(--bs-body-color);
+  --bs-table-border-color: var(--bs-border-color);
+}
+
+.table-hover tbody tr:hover {
+  background-color: color-mix(in srgb, var(--bs-body-color) 8%, transparent);
+}

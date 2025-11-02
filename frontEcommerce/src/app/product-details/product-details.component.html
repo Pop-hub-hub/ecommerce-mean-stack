@@ -1,0 +1,52 @@
+<div class="container py-5">
+  <div class="row">
+    <div class="col-md-6 text-center">
+      <img [src]="selectedImage" alt="Main Image" class="img-fluid rounded mb-3" style="max-height: 400px;" />
+
+      <div class="d-flex justify-content-center gap-2">
+        <img *ngFor="let img of product?.images"
+             [src]="img"
+             (click)="selectImage(img)"
+             class="border rounded"
+             style="width: 60px; height: 60px; cursor: pointer;" />
+      </div>
+    </div>
+
+
+    <div class="col-md-6" *ngIf="product">
+      <h2>{{ product.title }}</h2>
+      <p class="text-muted">{{ product.description }}</p>
+
+      <div class="mb-2">
+        <span class="badge bg-secondary me-2">{{ product.category }}</span>
+        <span class="badge bg-body-secondary text-body border">{{ product.brand }}</span>
+      </div>
+
+      <p class="fs-4 fw-bold">{{ product.price | currency:'USD' }}</p>
+
+      <div class="mb-2">
+        Rating:
+        @for (star of getStars(product.rating); track $index) {
+            <span class="text-warning">★</span>
+        }
+        <span class="text-muted">({{ product.rating }})</span>
+      </div>
+
+      <p [ngClass]="{'text-success': product.stock > 0, 'text-danger': product.stock === 0}">
+        {{ product.stock > 0 ? 'In Stock' : 'Out of Stock' }}
+      </p>
+
+      <div class="input-group mb-3 w-50">
+        <button class="btn btn-outline-secondary" type="button" (click)="decreaseQty()">−</button>
+        <input type="text" class="form-control text-center" [value]="quantity" readonly>
+        <button class="btn btn-outline-secondary" type="button" (click)="increaseQty()">+</button>
+      </div>
+
+      <p *ngIf="product.stock < 20" class="text-warning">
+        Only {{ product.stock }} items left! Don’t miss it.
+      </p>
+
+      <button class="btn btn-outline-primary" (click)="addToCart()" >Add to Cart</button>
+    </div>
+
+</div>

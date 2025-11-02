@@ -1,0 +1,72 @@
+<div class="container mt-4">
+  <h3>Your Orders</h3>
+  <div *ngIf="orders.length === 0">No orders yet.</div>
+
+  <div *ngFor="let order of orders; trackBy: trackByOrderId" class="card mb-3 p-3 shadow-sm">
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 order-header">
+      <div>
+        <p class="mb-1"><strong>Customer: </strong> <span class="customer-name">{{ currentUser?.firstName }} {{ currentUser?.lastName }}</span></p>
+        <p class="mb-1"><strong>Status:</strong> <span [ngClass]="getStatusClass(order.status)">{{ getStatusText(order.status) }}</span></p>
+        <p class="mb-1"><strong>ETA:</strong> <span class="eta-badge">{{ order.eta || ' 3-5 days' }}</span></p>
+      </div>
+      <div class="text-end">
+        <p class="mb-1"><strong>Date:</strong> {{ order.createdAt | date }}</p>
+        <p class="mb-1"><strong>Address:</strong> {{ order.address }}</p>
+        <p class="mb-1"><strong>Phone:</strong> {{ order.phone }}</p>
+      </div>
+    </div>
+
+    <div class="table-responsive mt-3">
+      <table class="table align-middle">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Price</th>
+            <th style="width: 160px;">Quantity</th>
+            <th>Subtotal</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of (order.products || order.items); trackBy: trackByProductId">
+            <td data-label="Product">
+              <div class="d-flex align-items-center gap-2">
+                <img [src]="item.productId?.thumbnail || item.productId?.images?.[0]" alt="" width="48" height="48" class="rounded">
+                <div>
+                  <div class="fw-semibold">{{ item.productId?.title || item.productId?.name }}</div>
+                  <div class="text-muted small">{{ item.productId?.category }}</div>
+                </div>
+              </div>
+            </td>
+            <td data-label="Price">{{ (item.productId?.price || 0) | currency:'EGP' }}</td>
+            <td data-label="Quantity">
+              <div class="input-group input-group-sm" *ngIf="order.status === 'pending'; else qtyReadOnly">
+                <button class="btn btn-outline-secondary" (click)="onDecrease(order._id, item)">−</button>
+                <input class="form-control text-center" [value]="item.quantity" readonly>
+                <button class="btn btn-outline-secondary" (click)="onIncrease(order._id, item)">+</button>
+              </div>
+              <ng-template #qtyReadOnly>
+                {{ item.quantity }}
+              </ng-template>
+            </td>
+            <td data-label="Subtotal">{{ ((item.productId?.price || 0) * (item.quantity || 0)) | currency:'EGP' }}</td>
+            <td class="text-end" data-label="Actions">
+              <button *ngIf="order.status === 'pending'" class="btn btn-sm btn-outline-danger" (click)="onRemoveItem(order._id, item)">Remove</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mt-2">
+      <div>
+        <strong>Total items:</strong> {{ getTotalItems(order.products || order.items) }}
+        <span class="ms-3"><strong>Total price:</strong> {{ getOrderTotal(order) | currency:'EGP' }}</span>
+      </div>
+      <div class="d-flex gap-2">
+        <button *ngIf="order.status === 'pending'" class="btn btn-primary btn-sm" [disabled]="!dirty[order._id]" (click)="save(order)">Save</button>
+        <button (click)="deleteOrder(order._id)" class="btn btn-danger btn-sm">Delete Order</button>
+      </div>
+    </div>
+  </div>
+</div>

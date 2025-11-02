@@ -1,0 +1,140 @@
+<div class="product-form-container">
+  <mat-card class="form-card">
+    <mat-card-header>
+      <mat-card-title>
+        <h2>{{ isEditMode ? 'Edit Product' : 'Add New Product' }}</h2>
+      </mat-card-title>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <form (ngSubmit)="onSubmit()" #productForm="ngForm">
+        <!-- Title -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Product Title</mat-label>
+          <input 
+            matInput 
+            [(ngModel)]="product.title" 
+            name="title" 
+            required
+            placeholder="Enter product title">
+        </mat-form-field>
+
+        <!-- Description -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Description</mat-label>
+          <textarea 
+            matInput 
+            [(ngModel)]="product.description" 
+            name="description" 
+            required
+            rows="4"
+            placeholder="Enter product description"></textarea>
+        </mat-form-field>
+
+        <!-- Brand -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Brand</mat-label>
+          <input 
+            matInput 
+            [(ngModel)]="product.brand" 
+            name="brand" 
+            placeholder="Enter brand name">
+        </mat-form-field>
+
+        <!-- Category -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Category</mat-label>
+          <mat-select [(ngModel)]="product.category" name="category" required>
+            <mat-option *ngFor="let category of categories" [value]="category">
+              {{ category | titlecase | replace:'-':' ' }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Price -->
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Price ($)</mat-label>
+          <input 
+            matInput 
+            type="number" 
+            [(ngModel)]="product.price" 
+            name="price" 
+            required
+            min="0"
+            step="0.01"
+            placeholder="0.00">
+        </mat-form-field>
+
+        <!-- Discount Percentage -->
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Discount (%)</mat-label>
+          <input 
+            matInput 
+            type="number" 
+            [(ngModel)]="product.discountPercentage" 
+            name="discountPercentage" 
+            min="0"
+            max="100"
+            step="0.1"
+            placeholder="0">
+        </mat-form-field>
+
+        <!-- Stock -->
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Stock Quantity</mat-label>
+          <input 
+            matInput 
+            type="number" 
+            [(ngModel)]="product.stock" 
+            name="stock" 
+            required
+            min="0"
+            placeholder="0">
+        </mat-form-field>
+
+        <!-- Rating -->
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Rating</mat-label>
+          <input 
+            matInput 
+            type="number" 
+            [(ngModel)]="product.rating" 
+            name="rating" 
+            min="0"
+            max="5"
+            step="0.1"
+            placeholder="0.0">
+        </mat-form-field>
+
+        <!-- Thumbnail URL -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Thumbnail URL</mat-label>
+          <input 
+            matInput 
+            [(ngModel)]="product.thumbnail" 
+            name="thumbnail" 
+            placeholder="Enter thumbnail image URL">
+        </mat-form-field>
+
+        <div class="form-actions">
+          <button 
+            mat-raised-button 
+            type="button" 
+            (click)="onCancel()"
+            class="cancel-btn">
+            Cancel
+          </button>
+          <button 
+            mat-raised-button 
+            type="submit" 
+            color="primary"
+            [disabled]="loading"
+            class="submit-btn">
+            <span *ngIf="!loading">{{ isEditMode ? 'Update Product' : 'Add Product' }}</span>
+            <span *ngIf="loading">Saving...</span>
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

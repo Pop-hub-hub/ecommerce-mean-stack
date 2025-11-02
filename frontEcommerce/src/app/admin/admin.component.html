@@ -1,0 +1,66 @@
+<div class="admin-container">
+
+  <!-- Sidebar -->
+  <aside class="admin-sidebar" [class.collapsed]="sidebarCollapsed">
+    <div class="sidebar-header">
+      <h3 class="admin-title" *ngIf="!sidebarCollapsed">Admin Panel</h3>
+      <h3 class="admin-title" *ngIf="sidebarCollapsed">👑</h3>
+      <button class="toggle-btn" (click)="toggleSidebar()" [attr.aria-label]="sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'">
+        {{ sidebarCollapsed ? '→' : '←' }}
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <ul class="nav-list">
+        <li *ngFor="let item of adminMenuItems" class="nav-item">
+          <a [routerLink]="item.route" 
+             routerLinkActive="active" 
+             class="nav-link"
+             [title]="sidebarCollapsed ? item.title : ''">
+            <span class="nav-icon">{{ item.icon }}</span>
+            <span class="nav-text" *ngIf="!sidebarCollapsed">{{ item.title }}</span>
+            
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-footer" *ngIf="!sidebarCollapsed">
+      <div class="user-info">
+        <div class="user-avatar">👤</div>
+        <div class="user-details">
+          <p class="user-name">{{ currentUser?.firstName }} {{ currentUser?.lastName }}</p>
+          <p class="user-role">{{ currentUser?.role }}</p>
+        </div>
+      </div>
+      <button class="logout-btn" (click)="logout()">
+        <span class="logout-icon">🚪</span>
+        <span class="logout-text">Logout</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="admin-main">
+    <header class="main-header">
+      <div class="header-content">
+        <h1 class="page-title">Admin Dashboard</h1>
+        <div class="header-actions">
+          <div class="user-greeting">
+            Welcome, <strong>{{ currentUser?.firstName }}</strong>
+          </div>
+          <button class="notification-btn" title="Notifications">
+            🔔
+          </button>
+          <button class="profile-btn" title="Profile">
+            👤
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="main-content">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>

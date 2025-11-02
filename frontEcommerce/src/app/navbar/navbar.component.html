@@ -1,0 +1,93 @@
+<nav class="navbar navbar-expand-lg sticky-top border-bottom shadow-sm">
+  <div class="container-fluid">
+    <!-- Logo on the left -->
+    <a class="navbar-brand" routerLink="/home">ShopEase Market</a> 
+
+    <!-- Toggler for mobile -->
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNavDropdown"
+      aria-controls="navbarNavDropdown"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"><span></span></span>
+    </button>
+
+    <!-- Navbar content -->
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <!-- Centered Links -->
+      <ul class="navbar-nav mx-lg-auto flex-column flex-lg-row align-items-start align-items-lg-center text-start">
+        <!-- Home Link -->
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            routerLink="/home" 
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+            >Home</a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            routerLink="/products"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+            >Products</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/cart">
+            🛒 Cart <span class="badge bg-danger">{{ cartCount }}</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/orders" routerLinkActive="active"
+            >Orders</a
+          >
+        </li>
+      </ul>
+
+      <!-- Right Side: Profile + Theme + Language -->
+      <ul class="navbar-nav ms-lg-auto d-flex align-items-start align-items-lg-center gap-3 flex-column flex-lg-row text-start">
+        <!-- Theme Mode Icon -->
+        <li class="nav-item">
+           <button (click)="toggleTheme()" class="theme-toggle-btn" aria-label="Toggle Theme">
+      {{ isDarkMode ? '☀️' : '🌙' }}
+    </button>
+
+        </li>
+
+        
+
+        <!-- Admin Link (only for admin users) -->
+        <li class="nav-item" *ngIf="currentUser?.role === 'admin'">
+          <a class="nav-link" routerLink="/admin" routerLinkActive="active">
+            👑 Admin Panel
+          </a>
+        </li>
+
+        <!-- My Profile Dropdown -->
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle d-flex align-items-center gap-2"
+            href="#"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <i class="bi bi-person-circle fs-5"></i> My Profile
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end shadow">
+            <li>
+              <a class="dropdown-item" (click)="navigateTo('/register', $event)">Register</a>
+            </li>
+            <li><a class="dropdown-item" (click)="navigateTo('/login', $event)">Login</a></li>
+            <li><a class="dropdown-item" (click)="logout($event)">Log Out</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

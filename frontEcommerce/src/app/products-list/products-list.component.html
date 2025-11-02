@@ -1,0 +1,93 @@
+<div class="container my-4 product-list-wrapper">
+
+  <!-- ✅ Toast Component -->
+  <app-toast></app-toast>
+
+  <!-- 🛍️ Header -->
+  <h2 class="mb-2">ShopEase App</h2>
+  <p class="text-muted products-list mb-4">
+    Welcome to our shopping website, start browsing...
+  </p>
+
+  <!-- 🔍 Search Input -->
+  <div class="search-wrapper text-center mb-4">
+    <input
+      type="text"
+      class="form-control search-input mx-auto"
+      placeholder="Search for products..."
+      [(ngModel)]="searchTerm"
+      (ngModelChange)="onSearchChange($event)"
+    />
+  </div>
+
+  <!-- 🧼 Filter Buttons -->
+  <div class="d-flex justify-content-center flex-wrap gap-3 mb-4">
+    <button
+      class="btn btn-success"
+      [ngClass]="filter === 'all' ? 'btn btn-success' : 'btn-outline-success'"
+      (click)="applyFilter('all')"
+    >
+      All
+    </button>
+    <button
+      class="btn btn-success"
+      [ngClass]="filter === 'on-sale' ? 'btn btn-success' : 'btn-outline-success'"
+      (click)="applyFilter('on-sale')"
+    >
+      On Sale
+    </button>
+    <button
+      class="btn btn-success"
+      [ngClass]="filter === 'in-stock' ? 'btn btn-success text-light' : 'btn-outline-success'"
+      (click)="applyFilter('in-stock')"
+    >
+      In Stock
+    </button>
+    <button
+      class="btn btn-success"
+      [ngClass]="filter === 'top-rated' ? 'btn btn-success' : 'btn-outline-success'"
+      (click)="applyFilter('top-rated')"
+    >
+      Top Rated
+    </button>
+  </div>
+
+  <!-- 📦 Product Cards -->
+  <div class="row">
+    @for(product of products; track $index) {
+      <div class="col-md-4 mb-4">
+        <app-product-card
+          [product]="product"
+        ></app-product-card>
+      </div>
+    }
+  </div>
+
+  <!-- 📎 Toolbar Pagination -->
+  <nav class="pagination-toolbar mt-5">
+    <ul class="pagination justify-content-center">
+      <li class="page-item" [class.disabled]="currentPage === 1">
+        <button class="page-link btn btn-success" (click)="goToPage(currentPage - 1)">
+          Previous
+        </button>
+      </li>
+
+      <li
+        class="page-item"
+        *ngFor="let page of pages"
+        [class.active]="currentPage === page"
+      >
+        <button class="page-link btn btn-success" (click)="goToPage(page)">
+          {{ page }}
+        </button>
+      </li>
+
+      <li class="page-item" [class.disabled]="currentPage === totalPages">
+        <button class="page-link btn btn-success" (click)="goToPage(currentPage + 1)">
+          Next
+        </button>
+      </li>
+    </ul>
+  </nav>
+
+</div>

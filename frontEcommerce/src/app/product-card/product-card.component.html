@@ -1,0 +1,46 @@
+<div class="card product-card shadow-sm border-0 h-100">
+  <a [routerLink]="['/product', (product._id || product.id)]" class="text-decoration-none text-dark" role="button">
+    <div class="product-image-wrapper">
+      <img
+        [src]="product.images[0]"
+        [alt]="'Image of ' + product.title"
+        class="product-image"
+        loading="lazy"
+      />
+    </div>
+  </a>
+
+  <div class="card-body text-center d-flex flex-column justify-content-between">
+    <h5 class="card-title mb-2" [title]="product.title">{{ product.title }}</h5>
+
+    <p class="card-text fw-bold mb-2">
+      {{ product.price | currency:'EGP':'symbol':'1.2-2' }}
+    </p>
+
+    <div class="stars mb-2 d-flex justify-content-center gap-1">
+      <ng-container *ngIf="product.rating !== undefined">
+        <span *ngFor="let star of getStars(); let i = index">
+          <span
+            class="fs-5"
+            [class.text-warning]="star === 1"
+            [class.text-muted]="star === 0"
+            [attr.aria-label]="'star ' + (i + 1)"
+          >★</span>
+        </span>
+      </ng-container>
+    </div>
+
+    <p [ngClass]="getStockClass()" class="fw-bold mt-2">
+      {{ getStockStatus() }}
+    </p>
+
+    <button
+      class="btn btn-success mt-3 w-100"
+      (click)="addToCart()"
+      [disabled]="product.stock === 0"
+      [attr.aria-label]="'Add ' + product.title + ' to cart'"
+    >
+      <i class="fa fa-cart-plus me-2"></i> Add to Cart
+    </button>
+  </div>
+</div>

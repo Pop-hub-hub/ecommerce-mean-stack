@@ -1,0 +1,124 @@
+<div class="container my-5 p-4 buy-container shadow">
+
+  <h2 class="text-center mb-4">🛒 Confirm Your Purchase</h2>
+
+  <div *ngIf="cartItems.length > 0">
+    <h4 class="mb-3">Items:</h4>
+    <ul class="list-group mb-4">
+      <li *ngFor="let item of cartItems" class="list-group-item d-flex justify-content-between align-items-center">
+        <span>{{ item.product.title }} (x{{ item.quantity }})</span>
+        <span>{{ item.product.price * item.quantity  | number:'1.2-2'}} EGP</span>
+      </li>
+    </ul>
+
+    <div class="mb-4">
+      <h4>Total: <span class="text-success">{{ totalPrice | number:'1.2-2' }} EGP</span></h4>
+    </div>
+
+   
+  <form [formGroup]="shippingForm" (ngSubmit)="placeOrder()">
+  <h4 class="mb-3">Shipping Information</h4>
+
+  <div class="mb-3">
+    <input class="form-control" formControlName="address" placeholder="🏠 Address" />
+      @if (formControls["address"].invalid && (formControls["address"].touched || submitted)) {
+      <div class="form-text text-danger">
+        @if (formControls["address"].hasError("required")) {
+          <span>Address is required</span>
+        }
+      </div>
+    }
+  </div>
+
+  <div class="mb-3 d-flex gap-2 flex-wrap">
+    <button type="button" class="btn btn-outline-secondary btn-sm" (click)="useGPS()" [disabled]="locating">
+      📍 Use GPS
+    </button>
+    <div class="form-text" *ngIf="shippingForm.value.location?.lat && shippingForm.value.location?.lng">
+      Lat: {{ shippingForm.value.location.lat | number:'1.4-4' }}, Lng: {{ shippingForm.value.location.lng | number:'1.4-4' }}
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <input class="form-control" formControlName="phone" placeholder="📞 Phone" />
+      @if (formControls["phone"].invalid && (formControls["phone"].touched || submitted)) {
+      <div class="form-text text-danger">
+        @if (formControls["phone"].hasError("required")) {
+          <span>Phone number is required</span>
+        }
+        @if (formControls["phone"].hasError("pattern")) {
+          <span>Phone number must be at least 10 digits and numeric</span>
+        }
+      </div>
+    }
+  </div>
+
+  <div class="mb-4">
+    <textarea class="form-control" formControlName="notes" rows="3" placeholder="📝 Notes (Optional)"></textarea>
+  </div>
+
+  <h4 class="mb-3">Payment</h4>
+  <div [formGroup]="paymentForm" class="mb-3">
+    <div class="row g-3">
+      <div class="col-12 col-md-4">
+        <label class="form-label">Method</label>
+        <select class="form-select" formControlName="method">
+          <option value="cod">Cash on Delivery</option>
+          <option value="card">Card (Visa/Mastercard)</option>
+          <option value="ewallet">E-Wallet</option>
+        </select>
+      </div>
+      
+      <ng-container *ngIf="paymentForm.value.method === 'card'">
+        <div class="col-12 col-md-4">
+          <label class="form-label">Cardholder Name</label>
+          <input class="form-control" formControlName="cardName" placeholder="John Doe" />
+        </div>
+        <div class="col-12 col-md-4">
+          <label class="form-label">Card Number</label>
+          <input class="form-control" formControlName="cardNumber" placeholder="4111 1111 1111 1111" />
+        </div>
+        <div class="col-6 col-md-2">
+          <label class="form-label">Expiry (MM/YY)</label>
+          <input class="form-control" formControlName="cardExpiry" placeholder="12/27" />
+        </div>
+        <div class="col-6 col-md-2">
+          <label class="form-label">CVV</label>
+          <input class="form-control" formControlName="cardCvv" placeholder="123" />
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="paymentForm.value.method === 'ewallet'">
+        <div class="col-12 col-md-4">
+          <label class="form-label">Provider</label>
+          <select class="form-select" formControlName="provider">
+            <option value="vodafone">Vodafone Cash</option>
+            <option value="orange">Orange Cash</option>
+            <option value="etisalat">Etisalat Cash</option>
+            <option value="we">WE Cash</option>
+          </select>
+        </div>
+        <div class="col-12 col-md-4">
+          <label class="form-label">Wallet Number</label>
+          <input class="form-control" formControlName="walletNumber" placeholder="01XXXXXXXXX" />
+        </div>
+        <div class="col-12 col-md-4">
+          <label class="form-label">Wallet PIN</label>
+          <input type="password" class="form-control" formControlName="walletPin" placeholder="••••" />
+        </div>
+      </ng-container>
+    </div>
+  </div>
+
+
+    <div class="text-center">
+      <button class="btn btn-success btn-lg px-5 rounded-pill shadow-sm" type = "submit">
+        ✅ Place Order
+      </button>
+    </div>
+
+
+  <div *ngIf="cartItems.length === 0" class="text-center">
+    <p class="text-muted">Your cart is empty.</p>
+  </div>
+

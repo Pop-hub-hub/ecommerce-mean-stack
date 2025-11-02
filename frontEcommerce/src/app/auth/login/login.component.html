@@ -1,0 +1,98 @@
+<div class="d-flex justify-content-center align-items-center vh-100 login">
+  <div class="card shadow p-4" style="width: 400px; direction: ltr;">
+    <h3 class="text-center mb-4">Login</h3>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <!-- Email Input -->
+      <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input
+          type="email"
+          class="form-control"
+          id="email"
+          formControlName="email"
+          placeholder="Enter your email"
+          [class.is-invalid]="submitted && f['email'].errors"
+        />
+        @if (submitted && f['email'].errors) {
+          <div class="invalid-feedback">
+            @if (f['email'].errors['required']) {
+              <div>Email is required</div>
+            }
+            @if (f['email'].errors['email']) {
+              <div>Please enter a valid email</div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Password Input -->
+      <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input
+          type="password"
+          class="form-control"
+          id="password"
+          formControlName="password"
+          placeholder="Enter your password"
+          [class.is-invalid]="submitted && f['password'].errors"
+        />
+        @if (submitted && f['password'].errors) {
+          <div class="invalid-feedback">
+            @if (f['password'].errors['required']) {
+              <div>Password is required</div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Forgot Password Button -->
+      <div class="text-end mb-3">
+        <button
+          type="button" (click)="navigateToForgotPassword()"
+          class="btn btn-link text-decoration-none text-primary p-0"
+        >
+          Forgot Password?
+        </button>
+      </div>
+
+      <!-- Remember Me -->
+      <div class="mb-3 form-check">
+        <input
+          type="checkbox"
+          class="form-check-input"
+          id="rememberMe"
+          formControlName="rememberMe"
+        />
+        <label class="form-check-label" for="rememberMe">Remember Me</label>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="d-grid gap-2">
+        <button type="submit" class="btn btn-primary" [disabled]="loading">
+          @if (loading) {
+            <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+            Loading...
+          } @else {
+            Login
+          }
+        </button>
+      </div>
+
+      <!-- Welcome Message -->
+      <div *ngIf="showWelcome" class="alert alert-success text-center mt-3">
+        ✅ Welcome back, {{ userName }}!
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="message" class="alert alert-danger text-center mt-3">
+        {{ message }}
+      </div>
+
+      <!-- Register Link -->
+      <div class="text-center mt-3">
+        <p>Don't have an account? <a routerLink="/register">Create a new account</a></p>
+      </div>
+    </form>
+  </div>
+</div>

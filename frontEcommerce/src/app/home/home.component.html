@@ -1,0 +1,109 @@
+<swiper-container
+  slides-per-view="3"
+  navigation="true"
+  pagination="true"
+  loop="true"
+  autoplay-delay="3000"
+  dir="rtl"
+  style="width: 100%; height: 480px;"
+  breakpoints='{"0":{"slidesPerView":1},"576":{"slidesPerView":1},"768":{"slidesPerView":2},"992":{"slidesPerView":3}}'
+>
+  <swiper-slide *ngFor="let product of sliderProducts">
+    <div class="product-card">
+      <div class="discount-badge" *ngIf="product.discountPercentage && product.discountPercentage > 0">
+        -{{ product.discountPercentage }}%
+      </div>
+
+      <img [src]="product.thumbnail" alt="{{ product.title }}" />
+
+      <div class="info">
+        <h3>{{ product.title }}</h3>
+
+        <p class="price">
+          <span class="original" *ngIf="product.discountPercentage" style="text-decoration: line-through; color: #888;">
+            {{ product.price | currency:'EGP' }}
+          </span>
+
+          <span class="discounted" style="font-weight: bold; color: #e91e63;">
+            {{ getDiscountedPrice(product.price, product.discountPercentage) | currency:'EGP' }}
+          </span>
+
+          <!-- وفر كذا -->
+          <span class="saved" *ngIf="product.discountPercentage" style="margin-left: 8px; color: green;">
+            (You save {{ product.price - getDiscountedPrice(product.price, product.discountPercentage) | currency:'EGP' }})
+          </span>
+        </p>
+
+        <p class="desc">{{ product.description }}</p>
+
+      </div>
+    </div>
+  </swiper-slide>
+</swiper-container>
+
+<section class="features-container">
+  <h2 class="features-title">Why Shop With Us</h2>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="icon-wrapper">
+        <img src="quality.png" alt="Quality" />
+      </div>
+      <h4>Premium Quality</h4>
+      <p>Only the finest products, handpicked from trusted brands worldwide.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon-wrapper">
+        <img src="delivery.jpg" alt="Shipping" />
+      </div>
+      <h4>Lightning-Fast Delivery</h4>
+      <p>Get your order delivered within 48 hours, anywhere in Egypt.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon-wrapper">
+        <img src="OIP.webp" alt="Support" />
+      </div>
+      <h4>24/7 Support</h4>
+      <p>Our team is always here to help you, day or night, no exceptions.</p>
+    </div>
+  </div>
+</section>
+
+
+
+<section class="customer-reviews">
+  <h2 class="section-title">Customer Reviews</h2>
+<swiper-container
+  slides-per-view="3"
+  navigation="true"
+  pagination="true"
+  loop="true"
+  autoplay-delay="3000"
+  dir="ltr"
+  breakpoints='{"0":{"slidesPerView":1},"576":{"slidesPerView":1},"768":{"slidesPerView":2},"992":{"slidesPerView":3}}'
+  >
+  <swiper-slide *ngFor="let review of reviews">
+    <div class="review-card">
+      <div class="image-wrapper">
+        <img [src]="review.image" alt="{{ review.name }}" class="review-image" />
+      </div>
+      <div class="review-content">
+        <h3>{{ review.name }}</h3>
+        <p class="review-message">{{ review.message }}</p>
+        <div class="rating">
+          <span *ngFor="let star of getRating(review.rating)" class="star">&#9733;</span>
+          <span *ngFor="let emptyStar of getEmptyRating(review.rating)" class="empty-star">&#9734;</span>
+        </div>
+      </div>
+    </div>
+  </swiper-slide>
+</swiper-container>
+</section>
+
+
+<section class="newsletter">
+  <h2>Stay Updated</h2>
+  <p>Subscribe to get the latest offers and product launches.</p>
+  <input type="email" placeholder="Enter your email" />
+  <button>Subscribe</button>
+</section>
+

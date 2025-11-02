@@ -1,0 +1,118 @@
+<div class="users-container">
+  <div class="users-header">
+    <h2>Users Management</h2>
+    <div class="header-actions">
+      <div class="search-box">
+        <input 
+          type="text" 
+          [(ngModel)]="searchTerm" 
+          (input)="searchUsers()"
+          placeholder="Search users..."
+          class="search-input"
+        >
+        <span class="search-icon">🔍</span>
+      </div>
+      <button class="add-user-btn" (click)="deleteAllUsers()">
+        <span class="btn-icon">🗑️</span>
+        Delete All Users
+      </button>
+    </div>
+  </div>
+
+  <div class="users-content">
+    <div class="users-table-container" *ngIf="!loading; else loadingTemplate">
+      <table class="users-table">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of paginatedUsers" class="user-row">
+            <td class="user-info">
+              <div class="user-avatar">{{ user.firstName?.charAt(0) }}{{ user.lastName?.charAt(0) }}</div>
+              <div class="user-details">
+                <span class="user-name">{{ user.firstName }} {{ user.lastName }}</span>
+                <span class="user-id">ID: {{ user._id }}</span>
+              </div>
+            </td>
+            <td class="user-email">{{ user.email }}</td>
+            <td class="user-role">
+              <select 
+                [value]="user.role" 
+                (change)="changeUserRole(user._id, $any($event.target).value)"
+                class="role-select"
+                [class.admin-role]="user.role === 'admin'"
+                [class.user-role]="user.role === 'user'"
+              >
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+              </select>
+            </td>
+            <td class="user-status">
+              <span 
+                class="status-badge" 
+                [class]="user.isActive ? 'status-active' : 'status-inactive'"
+                (click)="toggleUserStatus(user._id)"
+              >
+                {{ user.isActive ? 'Active' : 'Inactive' }}
+              </span>
+            </td>
+            <td class="user-created">{{ user.createdAt | date:'short' }}</td>
+            <td class="user-actions">
+              <button 
+                class="action-btn delete-btn" 
+                title="Delete User"
+                (click)="deleteUser(user._id)"
+              >
+                🗑️
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Pagination -->
+      <div class="pagination" *ngIf="totalPages > 1">
+        <button 
+          class="page-btn" 
+          [disabled]="currentPage === 1"
+          (click)="changePage(currentPage - 1)"
+        >
+          ← Previous
+        </button>
+        
+        <div class="page-numbers">
+          <button 
+            *ngFor="let page of [].constructor(totalPages); let i = index"
+            class="page-btn" 
+            [class.active]="currentPage === i + 1"
+            (click)="changePage(i + 1)"
+          >
+            {{ i + 1 }}
+          </button>
+        </div>
+        
+        <button 
+          class="page-btn" 
+          [disabled]="currentPage === totalPages"
+          (click)="changePage(currentPage + 1)"
+        >
+          Next →
+        </button>
+      </div>
+    </div>
+
+    <ng-template #loadingTemplate>
+      <div class="loading-container">
+        <div class="loading-spinner"></div>
+        <p>Loading users...</p>
+      </div>
+    </ng-template>
+  </div>
+</div>
